@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SAD_ElasticSearch.Core\SAD_ElasticSearch.Core.csproj" />
+    <ProjectReference Include="..\SAD_ElasticSearch.Infrastructure\SAD_ElasticSearch.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

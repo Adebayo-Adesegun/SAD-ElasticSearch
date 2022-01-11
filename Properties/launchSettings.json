@@ -1,5 +1,4 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,24 +7,28 @@
       "sslPort": 44380
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "AWS_OPENSEARCH_URL": "https://search-sda-elastic-search-data-test-y6inwwo2tdpah3itdnxz3wtgmy.eu-west-1.es.amazonaws.com",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "AWS_OPENSEARCH_PASSWORD": "P@r@klet0us1995",
+        "AWS_OPENSEARCH_USERNAME": "daniel"
       }
     },
     "SAD_Api": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }
