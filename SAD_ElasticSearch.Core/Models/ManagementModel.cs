@@ -4,9 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SAD_ElasticSearch.Core.Entities
+namespace SAD_ElasticSearch.Core.Models
 {
-    public class Management
+    public class ManagementModel
+    {
+        public Mgmt Mgmt { get; set; }
+    }
+
+
+    public class Mgmt
     {
         public int MgmtID { get; set; }
         public string Name { get; set; }

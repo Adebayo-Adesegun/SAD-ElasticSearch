@@ -14,7 +14,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "MAX_GRAM": "25",
         "AWS_OPENSEARCH_URL": "https://search-sda-elastic-search-data-test-y6inwwo2tdpah3itdnxz3wtgmy.eu-west-1.es.amazonaws.com",
+        "MIN_GRAM": "2",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "AWS_OPENSEARCH_PASSWORD": "P@r@klet0us1995",
         "AWS_OPENSEARCH_USERNAME": "daniel"

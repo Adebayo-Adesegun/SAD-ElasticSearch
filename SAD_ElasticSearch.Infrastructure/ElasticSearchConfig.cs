@@ -14,10 +14,12 @@ namespace SAD_ElasticSearch.Infrastructure
         private static string AWS_OPENSEARCH_PASSWORD = Environment.GetEnvironmentVariable("AWS_OPENSEARCH_PASSWORD");
 
 
+        private static int MIN_GRAM = int.Parse(Environment.GetEnvironmentVariable("MIN_GRAM"));
+        private static int MAX_GRAM = int.Parse(Environment.GetEnvironmentVariable("MAX_GRAM"));
+
         private static string AUTOCOMPLETE_SEARCH = "autocomplete-search";
         private static string SMART_ANALYZER = "smart-analyzer";
         private static string STOP_WORDS = "stop-words";
-
         private static string LANGUAGE = "_english_";
 
 
@@ -40,13 +42,20 @@ namespace SAD_ElasticSearch.Infrastructure
                     .Tokenizer(AUTOCOMPLETE_SEARCH)
                     .Filters(STOP_WORDS)
                  ))
-                // Define Edge n-gram tokenizer for autocomplete
-                .Tokenizers(tok => tok
+
+                // The following confgurations speaks to the Natural Language Processing part of ELastic Search 
+
+                // tokenizing returns to root words and stop words are e.g. the, and, I etc. 
+
+
+                // Setup Edge n-gram tokenizer for autocomplete
+                .Tokenizers(tokenizer => tokenizer
                     .EdgeNGram(AUTOCOMPLETE_SEARCH, e => e
-                        .MinGram(2)
-                        .MaxGram(25)
+                        .MinGram(MIN_GRAM)
+                        .MaxGram(MAX_GRAM)
                         .TokenChars(TokenChar.Letter, TokenChar.Digit)
                             ))
+
                 // Setup Stop Token Filter to remove stop words
                 .TokenFilters(tokenfilters => tokenfilters
                     .Stop(STOP_WORDS, w => w

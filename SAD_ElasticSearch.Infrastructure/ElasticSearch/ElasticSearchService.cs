@@ -15,10 +15,6 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
             _client = ElasticSearchConfig.GetClient();
         }
 
-        public bool CreateIndex(string indexName)
-        {
-            if (!_client)
-        }
 
         public string Query(string searchString, string[] markets, int limit)
         {
