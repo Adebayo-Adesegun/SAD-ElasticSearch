@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "SAD_ElasticSearch.Indexer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "MAX_GRAM": "25",
+        "AWS_OPENSEARCH_URL": "https://search-smart-data-apartment-eqq7ihkqwzxew2dxyf7l7vut5u.eu-west-1.es.amazonaws.com",
+        "MIN_GRAM": "2",
+        "AWS_OPENSEARCH_PASSWORD": "P@r@klet0us1995",
+        "AWS_OPENSEARCH_USERNAME": "daniel"
+      }
+    }
+  }
+}
