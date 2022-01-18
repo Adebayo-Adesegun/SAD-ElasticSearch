@@ -21,16 +21,18 @@ namespace SAD_Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { 
-                    Title = "Smart Apartment Data", 
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Smart Apartment Data",
                     Description = "Smart Data AWS Opensearh assessment",
-                    Version = "v1" 
+                    Version = "v1"
                 });
             });
+
+            services.AddControllers();
+
 
             services.AddSingleton<IElasticSearch, ElasticSearchService>();
 
@@ -53,7 +55,8 @@ namespace SAD_Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAD_Api v1"));
+                app.UseSwaggerUI(c => 
+                                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAD_Api v1"));
             }
 
             app.UseCors("CorsPolicy");
@@ -63,6 +66,8 @@ namespace SAD_Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+
 
             app.UseEndpoints(endpoints =>
             {

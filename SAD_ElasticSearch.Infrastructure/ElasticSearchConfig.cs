@@ -11,10 +11,13 @@ namespace SAD_ElasticSearch.Infrastructure
     public static class ElasticSearchConfig
     {
         private static string AWS_OPENSEARCH_URL = Environment.GetEnvironmentVariable("AWS_OPENSEARCH_URL");
+
         private static string AWS_OPENSEARCH_USERNAME = Environment.GetEnvironmentVariable("AWS_OPENSEARCH_USERNAME");
+
         private static string AWS_OPENSEARCH_PASSWORD = Environment.GetEnvironmentVariable("AWS_OPENSEARCH_PASSWORD");
 
         private static int MIN_GRAM = int.Parse(Environment.GetEnvironmentVariable("MIN_GRAM"));
+
         private static int MAX_GRAM = int.Parse(Environment.GetEnvironmentVariable("MAX_GRAM"));
 
         private static string AUTOCOMPLETE_SEARCH = "autocomplete-search";
@@ -23,17 +26,20 @@ namespace SAD_ElasticSearch.Infrastructure
 
 
         public const string SMART_ANALYZER = "smart-analyzer";
-        public const string MANAGEMENT_INDEX_NAME = "management";
-        public const string PROPERTY_INDEX_NAME = "property";
 
+        public static string LIVE_MANAGEMENT_INDEX_ALIAS => "management";
+        public static string LIVE_PROPERTY_INDEX_ALIAS => "property";
+
+        public static string OLD_MANAGEMENT_INDEX_ALIAS => "management-old";
+        public static string OLD_PROPERTY_INDEX_ALIAS => "property-old";
 
         public static ElasticClient GetClient()
         {
             ConnectionSettings settings = new ConnectionSettings(new Uri(AWS_OPENSEARCH_URL))
                 .BasicAuthentication(AWS_OPENSEARCH_USERNAME, AWS_OPENSEARCH_PASSWORD)
-                .DefaultIndex(PROPERTY_INDEX_NAME)
-                .DefaultMappingFor<Prop>(p => p.IndexName(PROPERTY_INDEX_NAME).IdProperty(i => i.PropertyID))
-                .DefaultMappingFor<Mgmt>(m => m.IndexName(MANAGEMENT_INDEX_NAME).IdProperty(i => i.MgmtID))
+                .DefaultIndex(LIVE_PROPERTY_INDEX_ALIAS)
+                .DefaultMappingFor<Prop>(p => p.IndexName(LIVE_PROPERTY_INDEX_ALIAS).IdProperty(i => i.PropertyID))
+                .DefaultMappingFor<Mgmt>(m => m.IndexName(LIVE_MANAGEMENT_INDEX_ALIAS).IdProperty(i => i.MgmtID))
                 .DefaultFieldNameInferrer(i => i)
                 .OnRequestCompleted(response =>
                 {
@@ -75,6 +81,8 @@ namespace SAD_ElasticSearch.Infrastructure
             return new ElasticClient(settings);
         }
 
+
+
         /// <summary>
         /// Function Delegate Analysis Descriptor
         /// </summary>
@@ -108,13 +116,6 @@ namespace SAD_ElasticSearch.Infrastructure
                             );
 
 
-        public static (int, int) ConfirmIndexUpload()
-        {
-            ElasticClient client = GetClient();
-
-            var indices_stats = client.Indices.Stats();
-
-            return (10, 10);
-        }
+        public static string CreateIndexName(string indexName) => $"{indexName}-{DateTime.UtcNow:dd-MM-yyyy-HH-mm-ss}";
     }
 }
