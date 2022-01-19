@@ -23,14 +23,14 @@ namespace SAD_ElasticSearch.Api.Controllers
         [HttpPost]
         public IActionResult Post([FromQuery]string[] markets, [FromQuery]string searchText, [FromQuery]int limit = 25)
         {
-            var response = new GenericAPIResponse<string>
-            {
+            //var response = new GenericAPIResponse<object>
+            //{
 
-                Data = _elasticSearch.Query(searchText, markets, limit),
-                Message = "fetched data"
-            };
+            //    Data = _elasticSearch.Query(searchText, markets, limit),
+            //    Message = "fetched data"
+            //};
 
-            return Ok(response);
+            return Ok(_elasticSearch.Query(searchText, markets, limit));
         }
     }
 }
