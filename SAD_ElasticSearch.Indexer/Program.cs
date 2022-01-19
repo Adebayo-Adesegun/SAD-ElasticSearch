@@ -36,6 +36,7 @@ namespace SAD_ElasticSearch.Indexer
 
 
             //client.Indices.Delete("management*");
+            //client.Indices.Delete("property*");
 
             IndexManagementModel();
             IndexPropertyModel();

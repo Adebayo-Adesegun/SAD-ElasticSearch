@@ -22,5 +22,7 @@ namespace SAD_ElasticSearch.Core.Models
         public string Market { get; set; }
         [Text(Analyzer = "smart-analyzer", Name = nameof(State))]
         public string State { get; set; }
+
+       // public CompletionField Suggest { get; set; }
     }
 }

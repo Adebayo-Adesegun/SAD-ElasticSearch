@@ -21,12 +21,13 @@ namespace SAD_ElasticSearch.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromQuery]string[] markets, [FromQuery]string searchText, [FromQuery]int limit = 25)
         {
-            var response = new GenericAPIResponse<ClusterHealth>
+            var response = new GenericAPIResponse<string>
             {
-                Data = _elasticSearch.ClusterHealth(),
-                Message = "fetched cluster health information"
+
+                Data = _elasticSearch.Query(searchText, markets, limit),
+                Message = "fetched data"
             };
 
             return Ok(response);

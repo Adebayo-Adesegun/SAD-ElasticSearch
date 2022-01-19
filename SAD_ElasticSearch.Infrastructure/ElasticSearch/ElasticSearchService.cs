@@ -1,9 +1,9 @@
 ﻿using Nest;
+using Newtonsoft.Json;
 using SAD_ElasticSearch.Core.Interfaces;
 using SAD_ElasticSearch.Core.Models;
 using System;
-using System.Collections.Generic;
-
+using System.Linq;
 
 namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
 {
@@ -11,6 +11,10 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
     {
 
         private readonly IElasticClient _client;
+        private const string PROPERTY_MARKET_FIELD = "Property.Market";
+        private const string MGMT_MARKET_FIELD = "Mgmt.Market";
+
+
         public ElasticSearchService()
         {
             _client = ElasticSearchConfig.GetClient();
@@ -39,24 +43,47 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
             return new ClusterHealth { DebugInformation = "No response received from cluster on NEST Client" };
         }
 
-        public string Query(string searchString, string[] markets, int limit)
+        public string Query(string searchString, string[] markets, int limit = 25)
         {
-            //var res = _client.Search(s => s.Query(q => q.Match(m => m.OnField(f => f.Title).Query("test post 123"))));
 
-            throw new NotImplementedException();
+            var search = _client.Search<object>(s => s
+                    .Index(Indices.Index(ElasticSearchConfig.LIVE_MANAGEMENT_INDEX_ALIAS).And(ElasticSearchConfig.LIVE_PROPERTY_INDEX_ALIAS))
+                    .Size(limit)
+                        .Query
+                            (q =>
+
+                            (q.MultiMatch
+                                (m => m.Fields(f => f
+                                        .Field(Infer.Field<PropertyModel>(ff => ff.Property.FormerName))
+                                        .Field(Infer.Field<PropertyModel>(ff => ff.Property.Name))
+                                        .Field(Infer.Field<PropertyModel>(ff => ff.Property.City))
+                                        .Field(Infer.Field<PropertyModel>(ff => ff.Property.State))
+                                )
+                                .Operator(Operator.Or)
+                                .Query(searchString)) 
+                                
+                                && +q.Term("_index", ElasticSearchConfig.LIVE_PROPERTY_INDEX_ALIAS)) 
+                            
+                            
+                            ||
+
+                        (q.MultiMatch(m => m.Fields(f => f
+                                    .Field(Infer.Field<ManagementModel> (ff => ff.Mgmt.Name))
+                                    .Field(Infer.Field<ManagementModel>(ff => ff.Mgmt.State)))
+                        .Operator(Operator.Or)
+                        .Query(searchString))
+                        
+                        && +q.Term("_index", ElasticSearchConfig.LIVE_MANAGEMENT_INDEX_ALIAS))
+                        
+                        
+                        ));
+
+            var result = search.Documents?.ToList();
+
+            var serializedData = JsonConvert.SerializeObject(result, Formatting.Indented);
+
+            return serializedData;
         }
 
-        public bool IndexProduct(string indexName, PropertyModel property)
-        {
-            //_client.Index(property, p => p.Id(property.Property.PropertyID).Refresh());
-
-            throw new NotImplementedException();
-        }
-
-
-        //public dynamic ViewIndex(string indexName)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Nest;
 using SAD_ElasticSearch.Core.Models;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SAD_ElasticSearch.Infrastructure
@@ -21,7 +22,7 @@ namespace SAD_ElasticSearch.Infrastructure
         private static int MAX_GRAM = int.Parse(Environment.GetEnvironmentVariable("MAX_GRAM"));
 
         private static string AUTOCOMPLETE_SEARCH = "autocomplete-search";
-        private static string STOP_WORDS = "stop-words";
+        private static List<string> STOP_WORDS = new() { "stop-words", "lowercase" };
         private static string LANGUAGE = "_english_";
 
 
@@ -41,6 +42,7 @@ namespace SAD_ElasticSearch.Infrastructure
                 .DefaultMappingFor<Prop>(p => p.IndexName(LIVE_PROPERTY_INDEX_ALIAS).IdProperty(i => i.PropertyID))
                 .DefaultMappingFor<Mgmt>(m => m.IndexName(LIVE_MANAGEMENT_INDEX_ALIAS).IdProperty(i => i.MgmtID))
                 .DefaultFieldNameInferrer(i => i)
+                .PrettyJson()
                 .OnRequestCompleted(response =>
                 {
                     // Log the response from Elastic Client
@@ -90,30 +92,33 @@ namespace SAD_ElasticSearch.Infrastructure
         /// <returns></returns>
         public static AnalysisDescriptor Analysis(AnalysisDescriptor analysis) => analysis
 
-             .Analyzers(analyzers => analyzers
-                .Custom(SMART_ANALYZER, c => c
-                    .Tokenizer(AUTOCOMPLETE_SEARCH)
-                    .Filters(STOP_WORDS)
-                 ))
 
-                // The following confgurations speaks to the Natural Language Processing part of ELastic Search 
+              // The following confgurations speaks to the Natural Language Processing part of ELastic Search 
 
-                // tokenizing returns to root words and stop words are e.g. the, and, I etc. 
+              // tokenizing returns to root words and stop words are e.g. the, and, I etc. 
 
 
-                // Setup Edge n-gram tokenizer for autocomplete
-                .Tokenizers(tokenizer => tokenizer
+              // Setup Edge n-gram tokenizer for autocomplete
+              .Tokenizers(tokenizer => tokenizer
                     .EdgeNGram(AUTOCOMPLETE_SEARCH, e => e
                         .MinGram(MIN_GRAM)
                         .MaxGram(MAX_GRAM)
                         .TokenChars(TokenChar.Letter, TokenChar.Digit)
                             ))
 
+
                 // Setup Stop Token Filter to remove stop words
-                .TokenFilters(tokenfilters => tokenfilters
-                    .Stop(STOP_WORDS, w => w
-                        .StopWords(LANGUAGE))
-                            );
+             .TokenFilters(tokenfilters => tokenfilters
+                    .Stop("stop-words", w => w
+                        .StopWords(LANGUAGE)))
+
+
+             .Analyzers(analyzers => analyzers
+                .Custom(SMART_ANALYZER, c => c
+                    .Tokenizer(AUTOCOMPLETE_SEARCH)
+                    .Filters(STOP_WORDS)
+                 ));
+
 
 
         public static string CreateIndexName(string indexName) => $"{indexName}-{DateTime.UtcNow:dd-MM-yyyy-HH-mm-ss}";

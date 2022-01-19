@@ -33,6 +33,7 @@ namespace SAD_ElasticSearch.Core.Models
 
         public float Lat { get; set; }
         public float Lng { get; set; }
+        //public CompletionField Suggest { get; set; }
     }
 
 }
