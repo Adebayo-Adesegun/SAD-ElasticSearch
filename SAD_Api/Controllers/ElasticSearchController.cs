@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SAD_ElasticSearch.Core.Interfaces;
 using SAD_ElasticSearch.Core.Models;
 using System;
@@ -20,17 +21,16 @@ namespace SAD_ElasticSearch.Api.Controllers
             _elasticSearch = elasticSearch;
         }
 
-        [HttpPost]
-        public IActionResult Post([FromQuery]string[] markets, [FromQuery]string searchText, [FromQuery]int limit = 25)
+        [HttpGet]
+        public IActionResult get([FromQuery]string[] markets, [FromQuery]string searchText, [FromQuery]int limit = 25)
         {
-            //var response = new GenericAPIResponse<object>
-            //{
+            var response = new GenericAPIResponse<List<object>>
+            {
+                Data = _elasticSearch.Query(searchText, markets, limit),
+                Message = "fetched data"
+            };
 
-            //    Data = _elasticSearch.Query(searchText, markets, limit),
-            //    Message = "fetched data"
-            //};
-
-            return Ok(_elasticSearch.Query(searchText, markets, limit));
+            return Ok(response);
         }
     }
 }

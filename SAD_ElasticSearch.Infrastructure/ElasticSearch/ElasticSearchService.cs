@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SAD_ElasticSearch.Core.Interfaces;
 using SAD_ElasticSearch.Core.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
@@ -46,19 +47,26 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
             return new ClusterHealth { DebugInformation = "No response received from cluster on NEST Client" };
         }
 
-        public string Query(string searchString, string[] markets, int limit = 25)
+        /// <summary>
+        /// This method receives a query search string, list of markets and a limit on the search data
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <param name="markets"></param>
+        /// <param name="limit"></param>
+        /// <returns>It results a List of object of either Property or Management Models </returns>
+        public List<object> Query(string searchString, string[] markets, int limit = 25)
         {
 
             // Form boolean Query
-            var boolQuery = new BoolQuery();
-
-
-            boolQuery.Must = new QueryContainer[]
+            var boolQuery = new BoolQuery
             {
-                new MultiMatchQuery
+                Must = new QueryContainer[]
                 {
-                    Query = searchString,
-                    Fields = MustFields
+                    new MultiMatchQuery
+                    {
+                        Query = searchString,
+                        Fields = MustFields
+                    }
                 }
             };
 
@@ -87,7 +95,8 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
             var search = _client.Search<object>(s => s
                     .Index(Indices.Index(ElasticSearchConfig.LIVE_MANAGEMENT_INDEX_ALIAS).And(ElasticSearchConfig.LIVE_PROPERTY_INDEX_ALIAS))
                     .Size(limit)
-                    .Query(q => boolQuery));
+                    .Query(q => boolQuery)
+                    .Sort(sort => sort.Descending(SortSpecialField.Score)));
 
 
 
@@ -139,9 +148,7 @@ namespace SAD_ElasticSearch.Infrastructure.ElasticSearch
 
             var result = search.Documents?.ToList();
 
-            var serializedData = JsonConvert.SerializeObject(result, Formatting.Indented);
-
-            return serializedData;
+            return result;
         }
 
     }

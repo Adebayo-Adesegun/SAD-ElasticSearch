@@ -1,11 +1,12 @@
 ﻿using Nest;
 using SAD_ElasticSearch.Core.Models;
+using System.Collections.Generic;
 
 namespace SAD_ElasticSearch.Core.Interfaces
 {
     public interface IElasticSearch
     {
-        public string Query(string searchString, string[] markets, int limit);
+        public List<object> Query(string searchString, string[] markets, int limit);
 
         public ClusterHealth ClusterHealth();
 

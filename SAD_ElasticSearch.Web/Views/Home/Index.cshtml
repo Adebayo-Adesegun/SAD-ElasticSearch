@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Elastic Search Test Application</h1>
+    <p>This tests the integration done on the elastic search NEST client on AWS OpenSearch</p>
+</div>
+
+<div>
+
+    <div class="jumbotron shadow">
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text" id="searchText" placeholder="search..." class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <select id="markets" class="selectpicker" multiple>
+                                    <option>San Antonio </option>
+                                    <option>Abilene </option>
+                                    <option>San Francisco </option>
+                                    <option>DFW </option>
+                                    <option>Austin </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+
+
+
+        $(document).ready(function () {
+
+            $(".selector").autocomplete({
+                appendTo: "#searchText",
+                minLength: 10,
+                classes: {
+                    "ui-autocomplete": "highlight"
+                }
+            });
+
+
+
+
+            $("#searchText").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Home/Index",
+                        type: "POST",
+                        dataType: "json",
+                        data: { search: request.term, markets: $('#markets').val() },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item, value: item };
+                            }))
+
+                        }
+                    })
+                },
+                messages: {
+                    noResults: "", results: function (resultsCount) {
+                        console.log(resultsCount)
+                    }
+                }
+            });
+        })
+    </script>
+
+}
